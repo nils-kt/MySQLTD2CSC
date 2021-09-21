@@ -9,9 +9,9 @@ MySQL Table Design to CSharp Class.
 
 ## How to use
 Enter your MySQL data in config.json.  
-Start the converter as follows: node index.js TABLENAME
+Start the converter as follows: `node index.js TABLENAME`
 
-Result:
+**Result:**
 ```cs
 public class Shops {
     public int Id {get; set;}
