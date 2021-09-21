@@ -27,7 +27,7 @@ public class Shops {
 ## Example
 ![Example gif](https://i.imgur.com/St1JDzE.gif)
 ## Why?
-A small tool was needed which makes it easier to create the required classes for the EntityFramework using C#.
+A small tool was needed which makes it easier to create the required classes for the Entity Framework using C#.
   
 Sharing is caring. :)  
 Feel free to improve the code further if you feel like it. 
