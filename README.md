@@ -1,18 +1,23 @@
 # MySQLTD2CSC
-MySQL Table Design to CSharp Class.
+**MySQL Table Design to CSharp Class**
 
 ---
 
-> **ATTENTION:** This is only a small developer tool which should never be used in a productive environment! 
+> ⚠️ **ATTENTION:** This is a developer tool intended only for testing and should **never** be used in a production environment!
 
 ---
 
-## How to use
-Enter your MySQL data in config.json.  
-Start the converter as follows: `node index.js TABLENAME`
+## Usage
+1. Enter your MySQL data in `config.json`.  
+2. Run the converter with the following command:  
+   ```bash
+   node index.js TABLE_NAME
+   ```
 
-**Result:**
-```cs
+**Example output:**
+`node index.js shops`
+```csharp
+[Table("shops")]
 public class Shops {
     public int Id {get; set;}
     public double PosX {get; set;}
@@ -24,10 +29,9 @@ public class Shops {
     public int CreateBlip {get; set;}
 }
 ```
-## Example
-![Example gif](https://i.imgur.com/St1JDzE.gif)
+
 ## Why?
-A small tool was needed which makes it easier to create the required classes for the Entity Framework using C#.
+This small tool was created to simplify the process of generating classes needed for the Entity Framework in C#.  
   
-Sharing is caring. :)  
-Feel free to improve the code further if you feel like it. 
+Sharing is caring!  
+Feel free to improve the code if you'd like. 😊
