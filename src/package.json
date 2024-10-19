@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "async": "^3.2.2",
-    "commander": "^8.2.0",
+    "async": "^3.2.6",
+    "commander": "^12.1.0",
     "mysql": "github:mysqljs/mysql"
   }
 }

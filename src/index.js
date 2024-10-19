@@ -1,53 +1,67 @@
 const config = require('./config.json');
-
-///////////////////////////////
-
 const mysql = require('mysql');
-const async = require('async');
 const commander = require('commander');
-
-///////////////////////////////
+const fs = require('fs');
 
 const program = new commander.Command();
 
-const fields = [];
-
-///////////////////////////////
-
-
 program
-    .argument('table', 'Name of the table')
+    .argument('<table>', 'Name of the table')
     .action((table) => {
-        var connection = mysql.createConnection({
+        const connection = mysql.createConnection({
             host: config.host,
             user: config.username,
             password: config.password,
-            database: config.database
+            database: config.database,
         });
 
         connection.connect();
 
-        connection.query(`DESCRIBE ${table};`, function (error, results, fields) {
-            if (error) throw error;
+        connection.query(`DESCRIBE ??;`, [table], (error, results) => {
+            if (error) {
+                console.error('Error describing the table:', error.message);
+                connection.end();
+                return;
+            }
 
-            async.each(results, function (element, next) {
+            const fields = results.map((element) => {
+                let fieldType;
 
-                let fieldType = element.Type.includes('int') ? 'int' : element.Type.includes('varchar') ? 'string' : element.Type.includes('double') ? 'double' : element.Type.includes('longtext') ? 'string' : element.Type;
-                fields.push({ 'fieldName': element.Field, 'fieldType': fieldType })
-                next();
+                if (element.Type.includes('int')) {
+                    fieldType = 'int';
+                } else if (element.Type.includes('varchar') || element.Type.includes('text') || element.Type.includes('char') || element.Type.includes('longtext')) {
+                    fieldType = 'string';
+                } else if (element.Type.includes('double') || element.Type.includes('float') || element.Type.includes('decimal')) {
+                    fieldType = 'double';
+                } else if (element.Type.includes('date') || element.Type.includes('time')) {
+                    fieldType = 'DateTime';
+                } else if (element.Type.includes('bool') || element.Type.includes('tinyint(1)')) {
+                    fieldType = 'bool';
+                } else if (element.Type.includes('json')) {
+                    fieldType = 'dynamic';
+                } else if (element.Type.includes('blob')) {
+                    fieldType = 'byte[]';
+                } else {
+                    fieldType = 'string';
+                }
 
-            }, () => {
-                console.log(`public class ${table} {`)
-                fields.forEach(element => {
-                    if (element.db === undefined) {
-                        console.log(`\tpublic ${element.fieldType} ${element.fieldName} {get; set;}`);
-                    }
-                });
-                console.log(`}`);
+                return { fieldName: element.Field, fieldType };
             });
-        });
 
-        connection.end();
+            const className = table.charAt(0).toUpperCase() + table.slice(1).toLowerCase();
+            const output = [`public class ${className} {`];
+            fields.forEach((element) => {
+                output.push(`    public ${element.fieldType} ${element.fieldName} { get; set; }`);
+            });
+            output.push(`}`);
+
+            const outputString = output.join('\n');
+            console.log(outputString);
+
+            fs.writeFileSync(`${className}.cs`, outputString, 'utf8');
+
+            connection.end();
+        });
     });
 
 program.parse();
