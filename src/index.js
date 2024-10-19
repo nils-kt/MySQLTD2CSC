@@ -51,6 +51,7 @@ program
             const className = table.charAt(0).toUpperCase() + table.slice(1).toLowerCase();
             const output = [`[Table("${table}")]\npublic class ${className} {`];
             fields.forEach((element) => {
+                output.push(`    [Column("${element.fieldName}")]`);
                 output.push(`    public ${element.fieldType} ${element.fieldName.charAt(0).toUpperCase() + element.fieldName.slice(1)} { get; set; }`);
             });
             output.push(`}`);
