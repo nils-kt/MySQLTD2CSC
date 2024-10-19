@@ -9,10 +9,11 @@ MySQL Table Design to CSharp Class.
 
 ## How to use
 Enter your MySQL data in config.json.  
-Start the converter as follows: `node index.js TABLENAME`
+Start the converter as follows: `node index.js shops`
 
 **Result:**
 ```cs
+[Table("shops")]
 public class Shops {
     public int Id {get; set;}
     public double PosX {get; set;}
@@ -24,8 +25,7 @@ public class Shops {
     public int CreateBlip {get; set;}
 }
 ```
-## Example
-![Example gif](https://i.imgur.com/St1JDzE.gif)
+
 ## Why?
 A small tool was needed which makes it easier to create the required classes for the Entity Framework using C#.
   
