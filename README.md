@@ -35,7 +35,3 @@ This small tool was created to simplify the process of generating classes needed
   
 Sharing is caring!  
 Feel free to improve the code if you'd like. 😊
-
----
-
-What do you think of these changes?
