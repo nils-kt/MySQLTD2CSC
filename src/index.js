@@ -2,6 +2,7 @@ const config = require('./config.json');
 const mysql = require('mysql');
 const commander = require('commander');
 const fs = require('fs');
+const path = require('path');
 
 const program = new commander.Command();
 
@@ -26,6 +27,7 @@ program
 
             const fields = results.map((element) => {
                 let fieldType;
+                let hasDefaultNull = element.Default === null;
 
                 if (element.Type.includes('int')) {
                     fieldType = 'int';
@@ -45,11 +47,19 @@ program
                     fieldType = 'string';
                 }
 
+                // Wenn das Feld nullable ist (Null: 'YES') oder der Default-Wert null ist, den Typ als nullable markieren
+                if (hasDefaultNull) {
+                    fieldType += '?';
+                }
+
                 return { fieldName: element.Field, fieldType };
             });
 
+
+
             const className = table.charAt(0).toUpperCase() + table.slice(1).toLowerCase();
-            const output = [`[Table("${table}")]\npublic class ${className} {`];
+            const output = [`[Table("${table}")]
+public class ${className} {`];
             fields.forEach((element) => {
                 output.push(`    [Column("${element.fieldName}")]`);
                 output.push(`    public ${element.fieldType} ${element.fieldName.charAt(0).toUpperCase() + element.fieldName.slice(1)} { get; set; }`);
@@ -59,7 +69,12 @@ program
             const outputString = output.join('\n');
             console.log(outputString);
 
-            fs.writeFileSync(`${className}.cs`, outputString, 'utf8');
+            const outputDir = path.join(__dirname, 'generated');
+            if (!fs.existsSync(outputDir)) {
+                fs.mkdirSync(outputDir, { recursive: true });
+            }
+
+            fs.writeFileSync(path.join(outputDir, `${className}.cs`), outputString, 'utf8');
 
             connection.end();
         });
